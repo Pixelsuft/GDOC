@@ -11,6 +11,7 @@
 #include <imgui-hook.hpp>
 #include <gd.h>
 #include "MenuLayer.h"
+#include "player_json_def.h"
 
 
 using namespace std;
@@ -46,6 +47,8 @@ namespace MenuLayer {
 		watermark->setPositionX(win_size.width / 2.0f);
 		watermark->setPositionY(watermark->getContentSize().height / 2.0f);
 		self->addChild(watermark, 0);
+
+		PlayerJson::update_var_player();
 
 		return result;
 	}

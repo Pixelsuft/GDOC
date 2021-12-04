@@ -33,6 +33,11 @@ float padding4 = 5.0f;
 bool default_mini_icon = false;
 
 
+void PlayerJson::update_var_player() {
+	default_mini_icon = (bool)gd::GameManager::sharedState()->getIntGameVariable("0060");
+}
+
+
 void PlayerJson::draw(ImGuiIO& io, bool enable_tooltip, RECT window_size) {
 	if (ImGui::Begin("Player (Default)"), nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize) {
 		for (int i = 0; i < data4.size(); i++) {
@@ -136,7 +141,6 @@ void PlayerJson::init(DWORD base_, DWORD cocos_base_, HANDLE pHandle_, float wid
 	for (int i = 0; i < data4.size(); i++) {
 		turned_on4.push_back(false);
 	}
-	default_mini_icon = (bool)gd::GameManager::sharedState()->getIntGameVariable("0060");
 }
 
 

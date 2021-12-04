@@ -34,7 +34,7 @@ DWORD WINAPI my_thread(void* hModule) {
 
     ImGuiHook::setupHooks([](void* target, void* hook, void** trampoline) {
         MH_CreateHook(target, hook, trampoline);
-    });
+        });
 
     MenuLayer::mem_init((DWORD)GetModuleHandle(0), (DWORD)GetModuleHandle("libcocos2d.dll"), GetCurrentProcess());
     PlayLayer::mem_init((DWORD)GetModuleHandle(0), (DWORD)GetModuleHandle("libcocos2d.dll"), GetCurrentProcess());

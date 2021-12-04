@@ -146,7 +146,7 @@ namespace PlayLayer {
 	void set_attempt_format(char* format) {
 		attempt_format = string(format);
 	}
-	void update_rainbow(int idx, int type, float speed, float speed2=1.0f) {
+	void update_rainbow(int idx, int type, float speed, float speed2 = 1.0f) {
 		if (idx == 0) {
 			player_rainbow = type;
 			player_rainbow_speed = speed;
@@ -280,12 +280,12 @@ namespace PlayLayer {
 		return PlayLayer::releaseButton(self, PlayerButton);
 	}
 
-    void __fastcall PlayLayer::resetLevelHook(gd::PlayLayer* self, void*) {
+	void __fastcall PlayLayer::resetLevelHook(gd::PlayLayer* self, void*) {
 		last_time = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 		enable_c = !layout_mode;
-        PlayLayer::resetLevel(self);
+		PlayLayer::resetLevel(self);
 		enable_c = true;
-		self->m_attemptLabel->setCString((regex_replace(attempt_format, regex("\\%i"), to_string(show_total_attempts ? self->m_level->m_nAttempts : self->m_currentAttempt))).c_str()); 
+		self->m_attemptLabel->setCString((regex_replace(attempt_format, regex("\\%i"), to_string(show_total_attempts ? self->m_level->m_nAttempts : self->m_currentAttempt))).c_str());
 		if (attempt_rgb != nullptr) {
 			self->m_attemptLabel->stopAction(attempt_rgb);
 		}
@@ -298,9 +298,9 @@ namespace PlayLayer {
 		last_dead = false;
 		CCApplication::sharedApplication()->setAnimationInterval(enable_fps_bypass ? frame_rate_ : default_frame_rate);
 		self->m_attemptLabel->setVisible(!hide_att || !self->m_isPracticeMode);
-    }
+	}
 
-    void __fastcall PlayLayer::onQuitHook(gd::PlayLayer* self, void*) {
+	void __fastcall PlayLayer::onQuitHook(gd::PlayLayer* self, void*) {
 		is_inited = false;
 
 		gd::GameManager* gm = gd::GameManager::sharedState();
@@ -309,16 +309,16 @@ namespace PlayLayer {
 		SpeedhackAudio::set(1.0f);
 		CCApplication::sharedApplication()->setAnimationInterval(default_frame_rate);
 		CCDirector::sharedDirector()->getScheduler()->setTimeScale(1.0f);
-        PlayLayer::onQuit(self);
-    }
+		PlayLayer::onQuit(self);
+	}
 
-    bool __fastcall PlayLayer::initHook(gd::PlayLayer* self, void*, void* level) {
+	bool __fastcall PlayLayer::initHook(gd::PlayLayer* self, void*, void* level) {
 		gd::GameManager* gm = gd::GameManager::sharedState();
 		show_cursor_before = (bool)gm->getIntGameVariable("0024");
 
 		gm->setIntGameVariable("0024", 1);
 
-        bool result = PlayLayer::init(self, level);
+		bool result = PlayLayer::init(self, level);
 		play_layer = self;
 
 		CCSize winSize = CCDirector::sharedDirector()->getWinSize();
@@ -406,10 +406,10 @@ namespace PlayLayer {
 		last_time = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 		is_inited = true;
 
-        return result;
-    }
+		return result;
+	}
 
-    void __fastcall PlayLayer::updateHook(gd::PlayLayer* self, void* ff, float dt) {
+	void __fastcall PlayLayer::updateHook(gd::PlayLayer* self, void* ff, float dt) {
 		if (!is_inited)
 			return PlayLayer::update(self, dt);
 		if (is_able_to_update && fake_bypass_plus_ > 1) {
@@ -518,12 +518,12 @@ namespace PlayLayer {
 			last_sec = now_sec;
 		}
 		CCApplication::sharedApplication()->setAnimationInterval(enable_fps_bypass ? frame_rate_ : default_frame_rate);
-        PlayLayer::update(self, (use_my_delta ? delta : dt) * shitty_speedhack);
+		PlayLayer::update(self, (use_my_delta ? delta : dt) * shitty_speedhack);
 		CCApplication::sharedApplication()->setAnimationInterval(enable_fps_bypass ? frame_rate_ : default_frame_rate);
 		enable_c = true;
-    }
+	}
 
-	inline void (__thiscall* setColorO)(CCSprite* self, const ccColor3B& color);
+	inline void(__thiscall* setColorO)(CCSprite* self, const ccColor3B& color);
 	void __fastcall setColorH(CCSprite* self, void*, const ccColor3B& color) {
 		if (enable_c) {
 			setColorO(self, color);
