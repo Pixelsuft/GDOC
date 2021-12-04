@@ -296,8 +296,9 @@ namespace PlayLayer {
 		last_finish = false;
 		last_finish2 = false;
 		last_dead = false;
-		CCApplication::sharedApplication()->setAnimationInterval(enable_fps_bypass ? frame_rate_ : default_frame_rate);
+
 		self->m_attemptLabel->setVisible(!hide_att || !self->m_isPracticeMode);
+		CCApplication::sharedApplication()->setAnimationInterval(enable_fps_bypass ? frame_rate_ : default_frame_rate);
 	}
 
 	void __fastcall PlayLayer::onQuitHook(gd::PlayLayer* self, void*) {
@@ -341,18 +342,18 @@ namespace PlayLayer {
 		if (player_rainbow == 1) {
 			CCAction* rgb1 = create_rgb(player_rainbow_speed);
 			CCAction* rgb2 = create_rgb(player_rainbow_speed, true);
-			((CCNode*)self->m_pPlayer1->getChildren()->objectAtIndex(0))->runAction((CCAction*)rgb1->copy());
+			((CCNode*)self->m_pPlayer1)->runAction((CCAction*)rgb1->copy());
 			//self->m_pPlayer1->m_pIconSprite->runAction((CCAction*)rgb2->copy());
 			((CCNode*)((CCNode*)self->m_pPlayer1->getChildren()->objectAtIndex(0))->getChildren()->objectAtIndex(0))->runAction((CCAction*)rgb2->copy());
-			((CCNode*)self->m_pPlayer1->getChildren()->objectAtIndex(1))->runAction((CCAction*)rgb1->copy());
+			//((CCNode*)self->m_pPlayer1->getChildren()->objectAtIndex(1))->runAction((CCAction*)rgb1->copy());
 			((CCNode*)((CCNode*)self->m_pPlayer1->getChildren()->objectAtIndex(1))->getChildren()->objectAtIndex(0))->runAction((CCAction*)rgb2->copy());
 		}
 		if (player2_rainbow == 1) {
 			CCAction* rgb1 = create_rgb(player2_rainbow_speed);
 			CCAction* rgb2 = create_rgb(player2_rainbow_speed, true);
-			((CCNode*)self->m_pPlayer2->getChildren()->objectAtIndex(0))->runAction((CCAction*)rgb2->copy());
+			((CCNode*)self->m_pPlayer2)->runAction((CCAction*)rgb2->copy());
 			((CCNode*)((CCNode*)self->m_pPlayer2->getChildren()->objectAtIndex(0))->getChildren()->objectAtIndex(0))->runAction((CCAction*)rgb1->copy());
-			((CCNode*)self->m_pPlayer2->getChildren()->objectAtIndex(1))->runAction((CCAction*)rgb2->copy());
+			//((CCNode*)self->m_pPlayer2->getChildren()->objectAtIndex(1))->runAction((CCAction*)rgb2->copy());
 			((CCNode*)((CCNode*)self->m_pPlayer2->getChildren()->objectAtIndex(1))->getChildren()->objectAtIndex(0))->runAction((CCAction*)rgb1->copy());
 		}
 		if (player3_rainbow) {
@@ -398,8 +399,8 @@ namespace PlayLayer {
 			hleb2->setScale(1.0f);
 			hleb2->setTag(4256356);
 			hleb2->setVisible(false);
-			self->addChild(hleb1, 999999);
-			self->addChild(hleb2, 999999);
+			self->addChild(hleb1, 9999);
+			self->addChild(hleb2, 9999);
 		}
 
 		last_sec = time(0);
@@ -502,12 +503,13 @@ namespace PlayLayer {
 				obj->setVisible(true);
 				obj->setOpacity(255);
 				obj->setColor(white_);
-				//obj->m_obBoxOffset;
 			}
 			bg->stopAllActions();
 			bg->setColor(bg_);
 			enable_c = false;
 		}
+
+
 		self->setScaleX(scale_x_);
 		self->setScaleY(scale_y_);
 		self->setPositionX(pos_x_);
