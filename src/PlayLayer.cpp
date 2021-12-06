@@ -88,6 +88,7 @@ namespace PlayLayer {
 	bool is_down = false;
 	bool fix_plat_cube = false;
 	float last_speed = 1.0f;
+	float respawn_time = 1.0f;
 	DWORD speed_addr;
 	DWORD speed2_addr;
 	DWORD ball_addr;
@@ -202,6 +203,8 @@ namespace PlayLayer {
 			return skew_x_;
 		if (idx == 12)
 			return skew_y_;
+		if (idx == 13)
+			return respawn_time;
 		return shitty_speedhack;
 	}
 	bool& get_bool_var(int idx) {
@@ -293,9 +296,23 @@ namespace PlayLayer {
 			attempt_rgb = create_rgb(rgb_att_speed);
 			self->m_attemptLabel->runAction(attempt_rgb);
 		}
+
 		last_finish = false;
 		last_finish2 = false;
 		last_dead = false;
+
+		if (enable_speedhack) {
+			CCDirector::sharedDirector()->getScheduler()->setTimeScale(speedhack_speed);
+		}
+		else {
+			CCDirector::sharedDirector()->getScheduler()->setTimeScale(1.0f);
+		}
+		if (enable_speedhack_audio) {
+			SpeedhackAudio::set(speedhack_audio_speed);
+		}
+		else {
+			SpeedhackAudio::set(1.0f);
+		}
 
 		self->m_attemptLabel->setVisible(!hide_att || !self->m_isPracticeMode);
 		CCApplication::sharedApplication()->setAnimationInterval(enable_fps_bypass ? frame_rate_ : default_frame_rate);
@@ -343,7 +360,6 @@ namespace PlayLayer {
 			CCAction* rgb1 = create_rgb(player_rainbow_speed);
 			CCAction* rgb2 = create_rgb(player_rainbow_speed, true);
 			((CCNode*)self->m_pPlayer1)->runAction((CCAction*)rgb1->copy());
-			//self->m_pPlayer1->m_pIconSprite->runAction((CCAction*)rgb2->copy());
 			((CCNode*)((CCNode*)self->m_pPlayer1->getChildren()->objectAtIndex(0))->getChildren()->objectAtIndex(0))->runAction((CCAction*)rgb2->copy());
 			//((CCNode*)self->m_pPlayer1->getChildren()->objectAtIndex(1))->runAction((CCAction*)rgb1->copy());
 			((CCNode*)((CCNode*)self->m_pPlayer1->getChildren()->objectAtIndex(1))->getChildren()->objectAtIndex(0))->runAction((CCAction*)rgb2->copy());
@@ -424,6 +440,7 @@ namespace PlayLayer {
 		uint64_t now = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 		time_t now_sec = time(0);
 		float player_x = self->m_pPlayer1->getPositionX();
+		float player_y = self->m_pPlayer1->getPositionY();
 		if (speed_up) {
 			if (enable_speedhack) {
 				speedhack_speed = (speed_up2 - speed_up1) * (player_x / self->m_levelLength) + speed_up1;
@@ -439,13 +456,10 @@ namespace PlayLayer {
 		float fps = (enable_speedhack ? speedhack_speed : 1.0f) / (use_my_delta ? delta : dt);
 		if (self->m_isDead) {
 			if (!last_dead) {
-				last_dead = true;
 				deaths += 1;
 				deaths1 += 1;
+				CCDirector::sharedDirector()->getScheduler()->setTimeScale(1.0f / respawn_time);
 			}
-		}
-		else if (last_dead) {
-			last_dead = false;
 		}
 		if (self->m_isPracticeMode) {
 			if (!last_practice) {
@@ -508,7 +522,6 @@ namespace PlayLayer {
 			bg->setColor(bg_);
 			enable_c = false;
 		}
-
 
 		self->setScaleX(scale_x_);
 		self->setScaleY(scale_y_);
