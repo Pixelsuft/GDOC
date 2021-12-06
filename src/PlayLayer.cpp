@@ -12,12 +12,12 @@
 #include <gd.h>
 #include <algorithm>
 #include <regex>
-#include <mmsystem.h>
 #include "PlayLayer.h"
 #include "mem_utils.h"
 #include "main_menu.h"
 #include "SpeedhackAudio.h"
-#pragma comment(lib, "Winmm.lib")
+#include "sound_system.h"
+#include "rand.h"
 
 
 using namespace std;
@@ -87,6 +87,7 @@ namespace PlayLayer {
 	bool is_up = false;
 	bool is_down = false;
 	bool fix_plat_cube = false;
+	bool enable_death_sound = false;
 	float last_speed = 1.0f;
 	float respawn_time = 1.0f;
 	DWORD speed_addr;
@@ -264,7 +265,7 @@ namespace PlayLayer {
 		bool is_first_player = self->m_pBaseColor == play_layer->m_pPlayer1->m_pBaseColor;
 		bool is_second_player = self->m_pBaseColor == play_layer->m_pPlayer2->m_pBaseColor;
 		if (is_first_player && enable_hleb) {
-			PlaySound("GDOC\\gd_hleb_sound.wav", NULL, SND_ASYNC);
+			SoundSystem::play_batya_sound();
 			hleb1->setVisible(false);
 			hleb2->setVisible(true);
 		}
@@ -315,6 +316,8 @@ namespace PlayLayer {
 		}
 
 		self->m_attemptLabel->setVisible(!hide_att || !self->m_isPracticeMode);
+
+		SoundSystem::stop_sound_playing();
 		CCApplication::sharedApplication()->setAnimationInterval(enable_fps_bypass ? frame_rate_ : default_frame_rate);
 	}
 
@@ -327,6 +330,10 @@ namespace PlayLayer {
 		SpeedhackAudio::set(1.0f);
 		CCApplication::sharedApplication()->setAnimationInterval(default_frame_rate);
 		CCDirector::sharedDirector()->getScheduler()->setTimeScale(1.0f);
+		SoundSystem::unload_death_sounds();
+
+		MyRandom::random_all();
+
 		PlayLayer::onQuit(self);
 	}
 
@@ -421,8 +428,10 @@ namespace PlayLayer {
 
 		last_sec = time(0);
 		last_time = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-		is_inited = true;
+		MyRandom::random_all();
+		SoundSystem::load_death_sounds();
 
+		is_inited = true;
 		return result;
 	}
 
@@ -456,6 +465,9 @@ namespace PlayLayer {
 		float fps = (enable_speedhack ? speedhack_speed : 1.0f) / (use_my_delta ? delta : dt);
 		if (self->m_isDead) {
 			if (!last_dead) {
+				if (enable_death_sound)
+					SoundSystem::play_random_death_sound();
+				last_dead = true;
 				deaths += 1;
 				deaths1 += 1;
 				CCDirector::sharedDirector()->getScheduler()->setTimeScale(1.0f / respawn_time);
