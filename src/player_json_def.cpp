@@ -78,9 +78,10 @@ void PlayerJson::draw(ImGuiIO& io, bool enable_tooltip, RECT window_size) {
 				ImGui::SetTooltip(string(current_obj["desc"]).c_str());
 			}
 		}
+
+		ImGui::Checkbox("Auto Practice Mode", &PlayLayer::get_bool_var(9));
 		ImGui::Checkbox("Practice No Death Win", &PlayLayer::get_bool_var(12));
 		ImGui::Checkbox("Practice Mode (No Reset)", &PlayLayer::get_bool_var(8));
-		ImGui::Checkbox("Auto Practice Mode", &PlayLayer::get_bool_var(9));
 		if (ImGui::Checkbox("Default Mini Icon", &default_mini_icon)) {
 			gd::GameManager::sharedState()->setIntGameVariable("0060", (int)default_mini_icon);
 		}

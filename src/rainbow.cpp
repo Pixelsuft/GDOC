@@ -78,8 +78,8 @@ void Rainbow::draw(ImGuiIO& io, bool enable_tooltip, RECT window_size) {
 			if (ImGui::RadioButton("RGB", &player3_rainbow, 1)) {
 				PlayLayer::update_rainbow(2, player3_rainbow, player3_rainbow_speed, 0.0f);
 			}
-			if (ImGui::DragFloat("Time", &player2_rainbow_speed, 0.5f, 0.01f, 500.0f, "%f", 0)) {
-				PlayLayer::update_rainbow(1, player3_rainbow, player3_rainbow_speed, 0.0f);
+			if (ImGui::DragFloat("Time", &player3_rainbow_speed, 0.5f, 0.01f, 500.0f, "%f", 0)) {
+				PlayLayer::update_rainbow(2, player3_rainbow, player3_rainbow_speed, 0.0f);
 			}
 			ImGui::TreePop();
 		}

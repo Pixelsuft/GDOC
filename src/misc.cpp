@@ -26,12 +26,33 @@ vector<bool> turned_on5;
 float width5 = 0.0f;
 bool need_sort5 = false;
 bool need_resize5 = false;
+bool no_death_sound = false;
 float padding5 = 5.0f;
+uint8_t no_sound_backup;
 
 
 void Misc::draw(ImGuiIO& io, bool enable_tooltip, RECT window_size) {
 	if (ImGui::Begin("Misc"), nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize) {
 		ImGui::Checkbox("Layout Mode (Bugged Alpha)", &PlayLayer::get_bool_var(7));
+		if (ImGui::Checkbox("No Death Sound", &no_death_sound)) {
+			if (no_death_sound) {
+				ReadProcessMemory(
+					pHandle5,
+					reinterpret_cast<void*>(base5 + 0x20A5AC),
+					&no_sound_backup,
+					sizeof(no_sound_backup),
+					NULL
+				);
+				MemUtils::write_bytes(base5 + 0x20A5AC, { 0x00 });
+			}
+			else {
+				MemUtils::write_bytes(base5 + 0x20A5AC, { no_sound_backup });
+			}
+		}
+		ImGui::Checkbox("Random Death Sound", &PlayLayer::get_bool_var(20));
+		if (ImGui::Button("Open Sounds Folder")) {
+			ShellExecute(NULL, "open", "GDOC\\death_sounds", NULL, NULL, SW_SHOWDEFAULT);
+		}
 		if (need_resize5)
 		{
 			need_resize5 = false;

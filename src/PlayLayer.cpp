@@ -33,7 +33,6 @@ namespace PlayLayer {
 	float shitty_speedhack = 1.0f;
 	bool is_inited = false;
 	bool use_my_delta = false;
-	bool show_cursor_before = false;
 	bool pause_button = false;
 	bool show_total_attempts = false;
 	bool rgb_attempts_ = false;
@@ -241,6 +240,8 @@ namespace PlayLayer {
 			return fix_plat_cube;
 		if (idx == 19)
 			return enable_hleb;
+		if (idx == 20)
+			return enable_death_sound;
 		if (is_inited) {
 			if (idx == 8)
 				return play_layer->m_isPracticeMode;
@@ -324,9 +325,6 @@ namespace PlayLayer {
 	void __fastcall PlayLayer::onQuitHook(gd::PlayLayer* self, void*) {
 		is_inited = false;
 
-		gd::GameManager* gm = gd::GameManager::sharedState();
-		gm->setIntGameVariable("0024", (int)show_cursor_before);
-
 		SpeedhackAudio::set(1.0f);
 		CCApplication::sharedApplication()->setAnimationInterval(default_frame_rate);
 		CCDirector::sharedDirector()->getScheduler()->setTimeScale(1.0f);
@@ -338,11 +336,6 @@ namespace PlayLayer {
 	}
 
 	bool __fastcall PlayLayer::initHook(gd::PlayLayer* self, void*, void* level) {
-		gd::GameManager* gm = gd::GameManager::sharedState();
-		show_cursor_before = (bool)gm->getIntGameVariable("0024");
-
-		gm->setIntGameVariable("0024", 1);
-
 		bool result = PlayLayer::init(self, level);
 		play_layer = self;
 
@@ -438,7 +431,7 @@ namespace PlayLayer {
 	void __fastcall PlayLayer::updateHook(gd::PlayLayer* self, void* ff, float dt) {
 		if (!is_inited)
 			return PlayLayer::update(self, dt);
-		if (is_able_to_update && fake_bypass_plus_ > 1) {
+		if (fake_bypass_plus_ > 1 && is_able_to_update) {
 			is_able_to_update = false;
 			for (int i = 0; i < fake_bypass_plus_; i++) {
 				PlayLayer::updateHook(self, 0, dt / (float)fake_bypass_plus_);

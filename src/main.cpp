@@ -28,7 +28,7 @@ DWORD WINAPI my_thread(void* hModule) {
     freopen_s(reinterpret_cast<FILE**>(stdout), "CONOUT$", "w", stdout);
     freopen_s(reinterpret_cast<FILE**>(stdin), "CONIN$", "w", stdin);
 #endif
-    MainMenu::init();
+    //MainMenu::init();
 
     MH_Initialize();
 
@@ -39,6 +39,10 @@ DWORD WINAPI my_thread(void* hModule) {
     MenuLayer::mem_init((DWORD)GetModuleHandle(0), (DWORD)GetModuleHandle("libcocos2d.dll"), GetCurrentProcess());
     PlayLayer::mem_init((DWORD)GetModuleHandle(0), (DWORD)GetModuleHandle("libcocos2d.dll"), GetCurrentProcess());
     SpeedhackAudio::init();
+
+    ImGuiHook::setHwndCallback(MainMenu::SetHwnd);
+    ImGuiHook::setRenderFunction(MainMenu::draw);
+    ImGuiHook::setToggleCallback(MainMenu::ProcessKey);
 
     MH_EnableHook(MH_ALL_HOOKS);
 

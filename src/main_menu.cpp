@@ -33,7 +33,7 @@ using namespace cocos2d;
 
 float default_width = 200.0f;
 float padding = 5.0f;
-bool g_showWindow = true;
+bool g_showWindow = false;
 HWND hwnd = 0;
 bool checkbox_check = false;
 POINT last_cursor_pos;
@@ -50,6 +50,7 @@ int menu_key = VK_TAB;
 bool input_menu_key = false;
 int screenshot_key = 'F';
 bool input_screenshot_key = false;
+bool inited = false;
 int font_id = 0;
 vector<ImFont*> fonts_list;
 
@@ -71,6 +72,12 @@ bool& MainMenu::get_b(int idx) {
         return input_menu_key;
     if (idx == 1)
         return input_screenshot_key;
+    if (idx == 2)
+    {
+        inited = true;
+        MainMenu::init();
+        return inited;
+    }
     return input_menu_key;
 }
 
@@ -90,6 +97,8 @@ vector<float>& MainMenu::get_h_array() {
 
 
 void MainMenu::draw() {
+    if (!inited)
+        return;
     if (g_showWindow) {
         uint64_t now_anim_time = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 
@@ -129,6 +138,8 @@ void MainMenu::draw() {
 
 
 void MainMenu::ProcessKey(WPARAM key__, bool is_down) {
+    if (!inited)
+        return;
     if (is_down) {
         if (input_menu_key)
         {
@@ -249,10 +260,6 @@ void MainMenu::init() {
     string no_ext = last_element.substr(0, last_element.size() - 4);
 
     cout << string(std::getenv("LOCALAPPDATA")) + "\\" + no_ext + "\\gdoc_windows.ini" << endl;*/
-
-    ImGuiHook::setHwndCallback(MainMenu::SetHwnd);
-    ImGuiHook::setRenderFunction(MainMenu::draw);
-    ImGuiHook::setToggleCallback(MainMenu::ProcessKey);
     MemUtils::init(base, cocos_base, pHandle, default_width, padding);
     BypassJson::init(base, cocos_base, pHandle, default_width, padding);
     GlobalJson::init(base, cocos_base, pHandle, default_width, padding);

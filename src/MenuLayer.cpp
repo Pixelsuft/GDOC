@@ -12,6 +12,7 @@
 #include <gd.h>
 #include "MenuLayer.h"
 #include "player_json_def.h"
+#include "main_menu.h"
 
 
 using namespace std;
@@ -25,6 +26,7 @@ namespace MenuLayer {
 	
 
 	bool hide_mg = false;
+	bool inited = false;
 
 
 	bool& get_mg_btn() {
@@ -34,6 +36,11 @@ namespace MenuLayer {
 
 	int __fastcall MenuLayer::initHook(gd::MenuLayer* self) {
 		int result = MenuLayer::init(self);
+
+		if (!inited) {
+			inited = true;
+			MainMenu::get_b(2) = true;
+		}
 
 		if (hide_mg) {
 			CCNode* mg_btn = (CCNode*)((CCNode*)self->getChildren()->objectAtIndex(5))->getChildren()->objectAtIndex(0);
