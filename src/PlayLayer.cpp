@@ -315,8 +315,30 @@ namespace PlayLayer {
 		else {
 			SpeedhackAudio::set(1.0f);
 		}
+		
+		uint8_t check_ha;
+		ReadProcessMemory(
+			pHandle,
+			reinterpret_cast<void*>(base + 0x2D83B8),
+			&check_ha,
+			sizeof(check_ha),
+			NULL
+		);
+		if (check_ha == 0x00) {
+			self->m_attemptLabel->setVisible(false);
+		}
+		else {
+			self->m_attemptLabel->setVisible(!hide_att || !self->m_isPracticeMode);
+		}
 
-		self->m_attemptLabel->setVisible(!hide_att || !self->m_isPracticeMode);
+		if (player2_rainbow == 1) { // Rob wtf player 2 stops rgb after restart
+			CCAction* rgb1 = create_rgb(player2_rainbow_speed);
+			CCAction* rgb2 = create_rgb(player2_rainbow_speed, true);
+			((CCNode*)self->m_pPlayer2)->runAction((CCAction*)rgb2->copy());
+			((CCNode*)((CCNode*)self->m_pPlayer2->getChildren()->objectAtIndex(0))->getChildren()->objectAtIndex(0))->runAction((CCAction*)rgb1->copy());
+			//((CCNode*)self->m_pPlayer2->getChildren()->objectAtIndex(1))->runAction((CCAction*)rgb2->copy());
+			((CCNode*)((CCNode*)self->m_pPlayer2->getChildren()->objectAtIndex(1))->getChildren()->objectAtIndex(0))->runAction((CCAction*)rgb1->copy());
+		}
 
 		SoundSystem::stop_sound_playing();
 		CCApplication::sharedApplication()->setAnimationInterval(enable_fps_bypass ? frame_rate_ : default_frame_rate);
@@ -363,14 +385,6 @@ namespace PlayLayer {
 			((CCNode*)((CCNode*)self->m_pPlayer1->getChildren()->objectAtIndex(0))->getChildren()->objectAtIndex(0))->runAction((CCAction*)rgb2->copy());
 			//((CCNode*)self->m_pPlayer1->getChildren()->objectAtIndex(1))->runAction((CCAction*)rgb1->copy());
 			((CCNode*)((CCNode*)self->m_pPlayer1->getChildren()->objectAtIndex(1))->getChildren()->objectAtIndex(0))->runAction((CCAction*)rgb2->copy());
-		}
-		if (player2_rainbow == 1) {
-			CCAction* rgb1 = create_rgb(player2_rainbow_speed);
-			CCAction* rgb2 = create_rgb(player2_rainbow_speed, true);
-			((CCNode*)self->m_pPlayer2)->runAction((CCAction*)rgb2->copy());
-			((CCNode*)((CCNode*)self->m_pPlayer2->getChildren()->objectAtIndex(0))->getChildren()->objectAtIndex(0))->runAction((CCAction*)rgb1->copy());
-			//((CCNode*)self->m_pPlayer2->getChildren()->objectAtIndex(1))->runAction((CCAction*)rgb2->copy());
-			((CCNode*)((CCNode*)self->m_pPlayer2->getChildren()->objectAtIndex(1))->getChildren()->objectAtIndex(0))->runAction((CCAction*)rgb1->copy());
 		}
 		if (player3_rainbow) {
 			((CCNode*)self->m_pObjectLayer->getChildren()->objectAtIndex(49))->runAction(create_rgb(player3_rainbow_speed));
