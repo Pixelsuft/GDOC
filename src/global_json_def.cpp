@@ -14,6 +14,7 @@
 #include "global_json_def.h"
 #include "mem_utils.h"
 #include "main_menu.h"
+#include "Utils.h"
 
 
 using namespace std;
@@ -36,6 +37,11 @@ float l1[4] = { 191.0f / 255.0f, 114.0f / 255.0f, 62.0f / 255.0f, 1.0f };
 float l2[4] = { 161.0f / 255.0f, 88.0f / 255.0f, 44.0f / 255.0f, 1.0f };
 float l3[4] = { 194.0f / 255.0f, 114.0f / 255.0f, 62.0f / 255.0f, 1.0f };
 float mcc1[4] = { 0.0f, 102.0f / 255.0f, 1.0f, 1.0f };
+
+
+void GlobalJson::ExportConfig() {
+	Utils::export_bool(turned_on2, "gdoc_cfg\\global.conf");
+}
 
 
 void GlobalJson::draw(ImGuiIO& io, bool enable_tooltip, RECT window_size) {
@@ -221,8 +227,49 @@ void GlobalJson::init(DWORD base_, DWORD cocos_base_, HANDLE pHandle_, float wid
 	getline(file, file_content, '\0');
 	file.close();
 	data2 = json::parse(file_content)["hacks"];
+	ifstream myfile;
+	myfile.open("gdoc_cfg\\global.conf");
 	for (int i = 0; i < data2.size(); i++) {
-		turned_on2.push_back(false);
+		bool to_add = false;
+		if (myfile.is_open()) {
+			string line_;
+			getline(myfile, line_);
+			if (line_ == "1") {
+				to_add = true;
+				json opcodes = data2.at(i)["opcodes"];
+				for (int j = 0; j < opcodes.size(); j++) {
+					json opcode = opcodes.at(j);
+					uintptr_t address;
+					sscanf_s(string(opcode["addr"]).data(), "%x", &address);
+					string str_bytes(opcode["on"]);
+					str_bytes.push_back(' ');
+					vector<uint8_t> bytes_to_write;
+					string current_byte("");
+					for (int h = 0; h < str_bytes.size(); h++) {
+						if (str_bytes.at(h) == ' ') {
+							int cur_bt;
+							sscanf_s(string("0x" + current_byte).data(), "%x", &cur_bt);
+							bytes_to_write.push_back(cur_bt);
+							current_byte.clear();
+							continue;
+						}
+						current_byte.push_back(str_bytes.at(h));
+					}
+					DWORD base_new = base2;
+					if (!opcode["lib"].is_null() && string(opcode["lib"]) == "libcocos2d.dll") {
+						base_new = cocos_base2;
+					}
+					uint32_t addr = base_new + address;
+					uint32_t old = MemUtils::Protect(addr, bytes_to_write.size(), PAGE_EXECUTE_READWRITE);
+					MemUtils::write_bytes(addr, bytes_to_write);
+					MemUtils::Protect(addr, bytes_to_write.size(), old);
+				}
+			}
+		}
+		turned_on2.push_back(to_add);
+	}
+	if (myfile.is_open()) {
+		myfile.close();
 	}
 }
 

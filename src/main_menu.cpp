@@ -207,6 +207,9 @@ void MainMenu::SetHwnd(HWND hwnd__) {
 
 void MainMenu::ExportConfig() {
     BypassJson::ExportConfig();
+    GlobalJson::ExportConfig();
+    CreatorJson::ExportConfig();
+    PlayerJson::ExportConfig();
 }
 
 

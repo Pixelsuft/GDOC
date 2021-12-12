@@ -150,6 +150,9 @@ void BypassJson::init(DWORD base_, DWORD cocos_base_, HANDLE pHandle_, float wid
 		}
 		turned_on1.push_back(to_add);
 	}
+	if (myfile.is_open()) {
+		myfile.close();
+	}
 }
 
 
