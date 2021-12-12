@@ -27,6 +27,7 @@ float width5 = 0.0f;
 bool need_sort5 = false;
 bool need_resize5 = false;
 bool no_death_sound = false;
+bool show_cursor_in_game = false;
 float padding5 = 5.0f;
 uint8_t no_sound_backup;
 
@@ -34,6 +35,13 @@ uint8_t no_sound_backup;
 void Misc::draw(ImGuiIO& io, bool enable_tooltip, RECT window_size) {
 	if (ImGui::Begin("Misc"), nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize) {
 		ImGui::Checkbox("Layout Mode (Bugged Alpha)", &PlayLayer::get_bool_var(7));
+		if (ImGui::Checkbox("Show Cursor In-Game", &show_cursor_in_game)) {
+			auto gm = gd::GameManager::sharedState();
+			gm->setIntGameVariable("0024", (int)show_cursor_in_game);
+		}
+		if (enable_tooltip && ImGui::IsItemHovered()) {
+			ImGui::SetTooltip("Show cursor in level.\nCan fix background bug.");
+		}
 		if (ImGui::Checkbox("No Death Sound", &no_death_sound)) {
 			if (no_death_sound) {
 				ReadProcessMemory(
@@ -100,6 +108,8 @@ void Misc::init(DWORD base_, DWORD cocos_base_, HANDLE pHandle_, float width_, f
 	pHandle5 = pHandle_;
 	width5 = width_;
 	padding5 = padding_;
+	auto gm = gd::GameManager::sharedState();
+	show_cursor_in_game = (bool)gm->getIntGameVariable("0024");
 }
 
 
