@@ -117,19 +117,36 @@ void Window::draw(ImGuiIO& io, bool enable_tooltip, RECT window_size) {
 
 		ImGui::Text("Other");
 		ImGui::Checkbox("Hide More Games Button", &MenuLayer::get_mg_btn());
-		ImGui::Checkbox("Show Pause Button", &PlayLayer::get_bool_var(2));
 		if (ImGui::Checkbox("Fullscreen Windowed Mode", &fullscreen_windowed)) {
 			if (fullscreen_windowed) {
-				HWND gd_hwnd = MainMenu::GetHwnd();
-				HWND desktop = GetDesktopWindow();
-				RECT screen_size;
-				GetClientRect(desktop, &screen_size);
-				GetWindowRect(gd_hwnd, &gd_rect_);
-				LONG gd_rect_long_1 = gd_rect_long_ == 0 ? GetWindowLong(gd_hwnd, GWL_STYLE) : gd_rect_long_;
-				gd_rect_long_ = gd_rect_long_1;
-				gd_rect_long_1 &= ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU);
-				SetWindowLong(gd_hwnd, GWL_STYLE, gd_rect_long_1);
-				MoveWindow(gd_hwnd, 0, 0, screen_size.right, screen_size.bottom, false);
+				uint8_t check_bt;
+				ReadProcessMemory(
+					pHandle6,
+					reinterpret_cast<void*>(cocos_base6 + 0x11388B),
+					&check_bt,
+					sizeof(check_bt),
+					NULL
+				);
+				if (check_bt == 0x90 || (MessageBox(
+					MainMenu::GetHwnd(),
+					"You have not checked 'Free Window Resize Option'.\nContinue?",
+					"Warning!",
+					MB_ICONWARNING | MB_YESNO | MB_DEFBUTTON2
+				) == IDYES)) {
+					HWND gd_hwnd = MainMenu::GetHwnd();
+					HWND desktop = GetDesktopWindow();
+					RECT screen_size;
+					GetClientRect(desktop, &screen_size);
+					GetWindowRect(gd_hwnd, &gd_rect_);
+					LONG gd_rect_long_1 = gd_rect_long_ == 0 ? GetWindowLong(gd_hwnd, GWL_STYLE) : gd_rect_long_;
+					gd_rect_long_ = gd_rect_long_1;
+					gd_rect_long_1 &= ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU);
+					SetWindowLong(gd_hwnd, GWL_STYLE, gd_rect_long_1);
+					MoveWindow(gd_hwnd, 0, 0, screen_size.right, screen_size.bottom, false);
+				}
+				else {
+					fullscreen_windowed = false;
+				}
 			}
 			else {
 				HWND gd_hwnd = MainMenu::GetHwnd();
