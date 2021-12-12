@@ -35,6 +35,7 @@ namespace MenuLayer {
 
 
 	int __fastcall MenuLayer::initHook(gd::MenuLayer* self) {
+		// TODO: add background image
 		int result = MenuLayer::init(self);
 
 		if (!inited) {

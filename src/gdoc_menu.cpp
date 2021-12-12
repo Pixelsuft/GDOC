@@ -68,6 +68,9 @@ void GdocMenu::draw(ImGuiIO& io, bool enable_tooltip, RECT window_size, ImGuiSty
 		MainMenu::get_b(0) = ImGui::IsItemHovered();
 		ImGui::Text(("ScreenShot Bind: [" + to_string(MainMenu::get_i(1)) + "]").c_str());
 		MainMenu::get_b(1) = ImGui::IsItemHovered();
+		if (ImGui::Button("Save Config")) {
+			MainMenu::ExportConfig();
+		}
 		
 		if (need_resize9)
 		{

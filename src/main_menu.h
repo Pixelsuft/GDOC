@@ -11,4 +11,5 @@ namespace MainMenu {
 	void ProcessKey(WPARAM key__, bool is_down);
 	HWND GetHwnd();
 	void set_font_id(int new_id);
+	void ExportConfig();
 }

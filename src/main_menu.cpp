@@ -205,6 +205,11 @@ void MainMenu::SetHwnd(HWND hwnd__) {
 }
 
 
+void MainMenu::ExportConfig() {
+    BypassJson::ExportConfig();
+}
+
+
 HWND MainMenu::GetHwnd() {
     return hwnd;
 }
@@ -260,6 +265,11 @@ void MainMenu::init() {
     string no_ext = last_element.substr(0, last_element.size() - 4);
 
     cout << string(std::getenv("LOCALAPPDATA")) + "\\" + no_ext + "\\gdoc_windows.ini" << endl;*/
+
+    if (!filesystem::is_directory("gdoc_cfg")) {
+        filesystem::create_directory("gdoc_cfg");
+    }
+
     MemUtils::init(base, cocos_base, pHandle, default_width, padding);
     BypassJson::init(base, cocos_base, pHandle, default_width, padding);
     GlobalJson::init(base, cocos_base, pHandle, default_width, padding);

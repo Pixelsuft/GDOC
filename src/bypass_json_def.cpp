@@ -14,6 +14,7 @@
 #include "bypass_json_def.h"
 #include "mem_utils.h"
 #include "main_menu.h"
+#include "Utils.h"
 
 
 using namespace std;
@@ -29,6 +30,11 @@ float width1 = 0.0f;
 bool need_sort1 = false;
 bool need_resize1 = false;
 float padding1 = 5.0f;
+
+
+void BypassJson::ExportConfig() {
+	Utils::export_bool(turned_on1, "gdoc_cfg\\bypass.conf");
+}
 
 
 void BypassJson::draw(ImGuiIO& io, bool enable_tooltip, RECT window_size) {
@@ -107,8 +113,42 @@ void BypassJson::init(DWORD base_, DWORD cocos_base_, HANDLE pHandle_, float wid
 	getline(file, file_content, '\0');
 	file.close();
 	data1 = json::parse(file_content)["hacks"];
+	ifstream myfile;
+	myfile.open("gdoc_cfg\\bypass.conf");
 	for (int i = 0; i < data1.size(); i++) {
-		turned_on1.push_back(false);
+		bool to_add = false;
+		if (myfile.is_open()) {
+			string line_;
+			getline(myfile, line_);
+			if (line_ == "1") {
+				to_add = true;
+				json opcodes = data1.at(i)["opcodes"];
+				for (int j = 0; j < opcodes.size(); j++) {
+					json opcode = opcodes.at(j);
+					uintptr_t address;
+					sscanf_s(string(opcode["addr"]).data(), "%x", &address);
+					string str_bytes(opcode["on"]);
+					str_bytes.push_back(' ');
+					vector<uint8_t> bytes_to_write;
+					string current_byte("");
+					for (int h = 0; h < str_bytes.size(); h++) {
+						if (str_bytes.at(h) == ' ') {
+							int cur_bt;
+							sscanf_s(string("0x" + current_byte).data(), "%x", &cur_bt);
+							bytes_to_write.push_back(cur_bt);
+							current_byte.clear();
+							continue;
+						}
+						current_byte.push_back(str_bytes.at(h));
+					}
+					uint32_t addr = base1 + address;
+					uint32_t old = MemUtils::Protect(addr, bytes_to_write.size(), PAGE_EXECUTE_READWRITE);
+					MemUtils::write_bytes(addr, bytes_to_write);
+					MemUtils::Protect(addr, bytes_to_write.size(), old);
+				}
+			}
+		}
+		turned_on1.push_back(to_add);
 	}
 }
 
