@@ -96,6 +96,7 @@ namespace PlayLayer {
 	int deaths = 0;
 	int deaths1 = 0;
 	bool enable_hleb = false;
+	bool disable_dead_jump = false;
 	time_t last_sec = 0;
 	CCSprite* hleb1;
 	CCSprite* hleb2;
@@ -242,6 +243,8 @@ namespace PlayLayer {
 			return enable_hleb;
 		if (idx == 20)
 			return enable_death_sound;
+		if (idx == 21)
+			return disable_dead_jump;
 		if (is_inited) {
 			if (idx == 8)
 				return play_layer->m_isPracticeMode;
@@ -263,6 +266,9 @@ namespace PlayLayer {
 	bool __fastcall PlayLayer::pushButtonHook(gd::PlayerObject* self, int edx, void* PlayerButton) {
 		if (!is_inited)
 			return PlayLayer::pushButton(self, PlayerButton);
+		if (last_dead && disable_dead_jump) {
+			return false;
+		}
 		bool is_first_player = self->m_pBaseColor == play_layer->m_pPlayer1->m_pBaseColor;
 		bool is_second_player = self->m_pBaseColor == play_layer->m_pPlayer2->m_pBaseColor;
 		if (is_first_player && enable_hleb) {
@@ -470,34 +476,6 @@ namespace PlayLayer {
 		float delta = (now - last_time) * (enable_speedhack ? speedhack_speed : 1.0f) / 1000.0f;
 		last_time = now;
 		float fps = (enable_speedhack ? speedhack_speed : 1.0f) / (use_my_delta ? delta : dt);
-		if (self->m_isDead) {
-			if (!last_dead) {
-				if (enable_death_sound)
-					SoundSystem::play_random_death_sound();
-				last_dead = true;
-				deaths += 1;
-				deaths1 += 1;
-				CCDirector::sharedDirector()->getScheduler()->setTimeScale(1.0f / respawn_time);
-			}
-		}
-		if (self->m_isPracticeMode) {
-			if (!last_practice) {
-				last_practice = true;
-				deaths1 = 0;
-			}
-		}
-		else if (last_practice) {
-			last_practice = false;
-		}
-		if (self->m_hasCompletedLevel && !last_finish) {
-			last_finish = true;
-			if (is_first_win && self->m_isPracticeMode && deaths1 == 0) {
-				self->m_isPracticeMode = false;
-			}
-		}
-		if (self->m_hasLevelCompleteMenu && !last_finish2) {
-			last_finish2 = true;
-		}
 		if (is_platformer) {
 			float speed_;
 			ReadProcessMemory(pHandle, reinterpret_cast<void*>(speed_addr), &speed_, sizeof(speed_), NULL);
@@ -555,6 +533,34 @@ namespace PlayLayer {
 		PlayLayer::update(self, (use_my_delta ? delta : dt) * shitty_speedhack);
 		CCApplication::sharedApplication()->setAnimationInterval(enable_fps_bypass ? frame_rate_ : default_frame_rate);
 		enable_c = true;
+		if (self->m_isDead) {
+			if (!last_dead) {
+				if (enable_death_sound)
+					SoundSystem::play_random_death_sound();
+				last_dead = true;
+				deaths += 1;
+				deaths1 += 1;
+				CCDirector::sharedDirector()->getScheduler()->setTimeScale(1.0f / respawn_time);
+			}
+		}
+		if (self->m_isPracticeMode) {
+			if (!last_practice) {
+				last_practice = true;
+				deaths1 = 0;
+			}
+		}
+		else if (last_practice) {
+			last_practice = false;
+		}
+		if (self->m_hasCompletedLevel && !last_finish) {
+			last_finish = true;
+			if (is_first_win && self->m_isPracticeMode && deaths1 == 0) {
+				self->m_isPracticeMode = false;
+			}
+		}
+		if (self->m_hasLevelCompleteMenu && !last_finish2) {
+			last_finish2 = true;
+		}
 	}
 
 	inline void(__thiscall* setColorO)(CCSprite* self, const ccColor3B& color);

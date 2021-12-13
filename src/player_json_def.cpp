@@ -91,12 +91,13 @@ void PlayerJson::draw(ImGuiIO& io, bool enable_tooltip, RECT window_size) {
 		if (ImGui::Checkbox("Default Mini Icon", &default_mini_icon)) {
 			gd::GameManager::sharedState()->setIntGameVariable("0060", (int)default_mini_icon);
 		}
+		ImGui::Checkbox("Disable Jump When Dead", &PlayLayer::get_bool_var(21));
 		ImGui::Text("Respawn Time");
 		ImGui::DragFloat("T", &PlayLayer::get_float_var(13), 0.5f, 0.01f, 9999.0f, "%f", 0.0f);
 		if (need_resize4)
 		{
 			need_resize4 = false;
-			ImGui::SetWindowSize(ImVec2(io.FontGlobalScale * width4, io.FontGlobalScale * 650.0f));
+			ImGui::SetWindowSize(ImVec2(io.FontGlobalScale * width4, io.FontGlobalScale * 900.0f));
 		}
 		else
 		{
@@ -104,8 +105,8 @@ void PlayerJson::draw(ImGuiIO& io, bool enable_tooltip, RECT window_size) {
 			if (window_size.x > io.FontGlobalScale * width4) {
 				ImGui::SetWindowSize(ImVec2(io.FontGlobalScale * width4, window_size.y));
 			}
-			if (window_size.y > io.FontGlobalScale * 650.0f) {
-				ImGui::SetWindowSize(ImVec2(window_size.x, io.FontGlobalScale * 650.0f));
+			if (window_size.y > io.FontGlobalScale * 900.0f) {
+				ImGui::SetWindowSize(ImVec2(window_size.x, io.FontGlobalScale * 900.0f));
 			}
 		}
 		if (need_sort4)
@@ -122,11 +123,11 @@ void PlayerJson::draw(ImGuiIO& io, bool enable_tooltip, RECT window_size) {
 					last_smallest = h_array.at(i);
 				}
 				ImGui::SetWindowPos(ImVec2(padding4 * (float)(smallest_id + 1) + width4 * (float)(smallest_id)*io.FontGlobalScale, last_smallest + padding4));
-				h_array.at(smallest_id) += padding4 + io.FontGlobalScale * 650.0f;
+				h_array.at(smallest_id) += padding4 + io.FontGlobalScale * 900.0f;
 			}
 			else {
 				ImGui::SetWindowPos(ImVec2(padding4 * 4.0f + width4 * 3.0f * io.FontGlobalScale, padding4));
-				MainMenu::get_h_array().push_back(io.FontGlobalScale * 650.0f + padding4);
+				MainMenu::get_h_array().push_back(io.FontGlobalScale * 900.0f + padding4);
 			}
 		}
 	}

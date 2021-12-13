@@ -15,6 +15,7 @@
 #include "window.h"
 #include "PlayLayer.h"
 #include "MenuLayer.h"
+#include "SpeedhackAudio.h"
 
 
 using namespace std;
@@ -91,6 +92,10 @@ void Window::draw(ImGuiIO& io, bool enable_tooltip, RECT window_size) {
 		}
 
 		ImGui::DragFloat("Shitty", &PlayLayer::get_float_var(0), 0.5f, 0.3f, 999.0f, "%f", 0.0f);
+		if (ImGui::Button("Force Apply (Beta)")) {
+			cocos2d::CCDirector::sharedDirector()->getScheduler()->setTimeScale(enable_speedhack ? speedhack_speed : 1.0f);
+			SpeedhackAudio::set(enable_speedhack_audio ? audio_speedhack_speed : 1.0f);
+		}
 
 		ImGui::Text("In-Game FPS");
 		ImGui::Checkbox("New Delta", &PlayLayer::get_bool_var(1));

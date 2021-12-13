@@ -176,7 +176,7 @@ void GlobalJson::draw(ImGuiIO& io, bool enable_tooltip, RECT window_size) {
 		if (need_resize2)
 		{
 			need_resize2 = false;
-			ImGui::SetWindowSize(ImVec2(io.FontGlobalScale * width2, io.FontGlobalScale * 500.0f));
+			ImGui::SetWindowSize(ImVec2(io.FontGlobalScale * width2, io.FontGlobalScale * 600.0f));
 		}
 		else
 		{
@@ -184,8 +184,8 @@ void GlobalJson::draw(ImGuiIO& io, bool enable_tooltip, RECT window_size) {
 			if (window_size.x > io.FontGlobalScale * width2) {
 				ImGui::SetWindowSize(ImVec2(io.FontGlobalScale * width2, window_size.y));
 			}
-			if (window_size.y > io.FontGlobalScale * 500.0f) {
-				ImGui::SetWindowSize(ImVec2(window_size.x, io.FontGlobalScale * 500.0f));
+			if (window_size.y > io.FontGlobalScale * 600.0f) {
+				ImGui::SetWindowSize(ImVec2(window_size.x, io.FontGlobalScale * 600.0f));
 			}
 		}
 		if (need_sort2)
@@ -202,11 +202,11 @@ void GlobalJson::draw(ImGuiIO& io, bool enable_tooltip, RECT window_size) {
 					last_smallest = h_array.at(i);
 				}
 				ImGui::SetWindowPos(ImVec2(padding2 * (float)(smallest_id + 1) + width2 * (float)(smallest_id) * io.FontGlobalScale, last_smallest + padding2));
-				h_array.at(smallest_id) += padding2 + io.FontGlobalScale * 500.0f;
+				h_array.at(smallest_id) += padding2 + io.FontGlobalScale * 600.0f;
 			}
 			else {
 				ImGui::SetWindowPos(ImVec2(padding2 * 2.0f + width2 * io.FontGlobalScale, padding2));
-				MainMenu::get_h_array().push_back(io.FontGlobalScale * 500.0f + padding2);
+				MainMenu::get_h_array().push_back(io.FontGlobalScale * 600.0f + padding2);
 			}
 		}
 	}
